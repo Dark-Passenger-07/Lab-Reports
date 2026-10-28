@@ -1,0 +1,22 @@
+# Backend Development Lab Reports
+
+This repository contains backend development laboratory experiments and submissions.
+
+## Student Details
+- **Name:** Aravind Gabbi
+- **Section:** CSE-QE 113
+
+## Labs Index
+
+| Lab | Title | Directory | Status |
+|:---:|:---|:---:|:---:|
+| Lab 1 | Node.js and Express Server | [lab-01](./lab-01) | Completed |
+| Lab 2 | Upcoming | lab-02 | Pending |
+| Lab 3 | Upcoming | lab-03 | Pending |
+| Lab 4 | Upcoming | lab-04 | Pending |
+| Lab 5 | Upcoming | lab-05 | Pending |
+| Lab 6 | Upcoming | lab-06 | Pending |
+| Lab 7 | Upcoming | lab-07 | Pending |
+| Lab 8 | Upcoming | lab-08 | Pending |
+| Lab 9 | Upcoming | lab-09 | Pending |
+| Lab 10 | Upcoming | lab-10 | Pending |
