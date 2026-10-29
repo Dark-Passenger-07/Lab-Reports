@@ -3,7 +3,7 @@
 ## Student Details
 
 - **Name:** Aravind Gabbi
-- **Registration Number:** [Enter Registration Number]
+- **Registration Number:** 252U1R8021
 - **Section:** CSE-QE 113
 
 ## Live Link
