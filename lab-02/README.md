@@ -6,12 +6,16 @@
 - **Registration Number:** 252U1R8021
 - **Section:** CSE-QE 113
 
-## Live Link
+## Live Links & Interactive Testing
 
-[https://lab-02-sqlite-server.onrender.com/](https://lab-02-sqlite-server.onrender.com/)
+- 🌐 **Live Base URL:** [https://lab-02-sqlite-server.onrender.com/](https://lab-02-sqlite-server.onrender.com/)
+- 📚 **Get All Books Endpoint:** [https://lab-02-sqlite-server.onrender.com/books/](https://lab-02-sqlite-server.onrender.com/books/)
+- 🚀 **Interactive API Tester Studio (Test POST, PUT & DELETE in browser):**  
+  👉 **[https://lab-02-sqlite-server.onrender.com/tester](https://lab-02-sqlite-server.onrender.com/tester)**
 
-- **Interactive API Tester Studio:** [https://lab-02-sqlite-server.onrender.com/tester](https://lab-02-sqlite-server.onrender.com/tester)
-- **Books API Endpoint:** [https://lab-02-sqlite-server.onrender.com/books/](https://lab-02-sqlite-server.onrender.com/books/)
+> [!TIP]
+> **Testing POST, PUT, and DELETE in the Browser:**  
+> Since standard browser address bars only send `GET` requests, you can use the built-in **[Interactive API Tester Studio](https://lab-02-sqlite-server.onrender.com/tester)** to directly trigger `POST`, `PUT`, and `DELETE` requests with JSON payloads and view real-time HTTP response statuses and data in your browser without requiring Postman!
 
 ## Project Description
 
