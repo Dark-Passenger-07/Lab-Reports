@@ -3,12 +3,15 @@
 ## Student Details
 
 - **Name:** Aravind Gabbi
-- **Registration Number:** [Enter Registration Number]
+- **Registration Number:** 252U1R8021
 - **Section:** CSE-QE 113
 
 ## Live Link
 
-Not deployed yet
+[https://lab-02-sqlite-server.onrender.com/](https://lab-02-sqlite-server.onrender.com/)
+
+- **Interactive API Tester Studio:** [https://lab-02-sqlite-server.onrender.com/tester](https://lab-02-sqlite-server.onrender.com/tester)
+- **Books API Endpoint:** [https://lab-02-sqlite-server.onrender.com/books/](https://lab-02-sqlite-server.onrender.com/books/)
 
 ## Project Description
 

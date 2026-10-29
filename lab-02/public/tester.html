@@ -390,7 +390,7 @@
             <option value="PUT">PUT</option>
             <option value="DELETE">DELETE</option>
           </select>
-          <input type="text" class="url-input" id="urlInput" value="http://localhost:3000/books/">
+          <input type="text" class="url-input" id="urlInput" value="">
           <button class="send-btn" id="sendBtn">▶ Send Request</button>
         </div>
 
@@ -428,6 +428,8 @@
   </div>
 
   <script>
+    // Dynamically resolve base URL from the current window (supports both localhost and Render live domain)
+    const BASE_URL = window.location.origin;
     let activeTestBookId = null;
 
     const tests = [
@@ -435,7 +437,7 @@
         id: "get-all",
         title: "1. GET All Books",
         method: "GET",
-        url: "http://localhost:3000/books/",
+        url: `${BASE_URL}/books/`,
         body: null,
         screenshot: "screenshots/get-all-books.png",
         methodClass: "method-get"
@@ -444,7 +446,7 @@
         id: "get-single",
         title: "2. GET Single Book",
         method: "GET",
-        url: "http://localhost:3000/books/1/",
+        url: `${BASE_URL}/books/1/`,
         body: null,
         screenshot: "screenshots/get-single-book.png",
         methodClass: "method-get"
@@ -453,7 +455,7 @@
         id: "post-book",
         title: "3. POST New Book",
         method: "POST",
-        url: "http://localhost:3000/books/",
+        url: `${BASE_URL}/books/`,
         body: JSON.stringify({
           title: "Clean Architecture",
           author: "Robert C. Martin",
@@ -467,7 +469,7 @@
         id: "put-book",
         title: "4. PUT Update Book",
         method: "PUT",
-        url: "http://localhost:3000/books/10/",
+        url: `${BASE_URL}/books/10/`,
         body: JSON.stringify({
           title: "Clean Architecture - Revised Edition",
           author: "Robert C. Martin",
@@ -481,7 +483,7 @@
         id: "delete-book",
         title: "5. DELETE Book",
         method: "DELETE",
-        url: "http://localhost:3000/books/10/",
+        url: `${BASE_URL}/books/10/`,
         body: null,
         screenshot: "screenshots/delete-book.png",
         methodClass: "method-delete"
@@ -490,7 +492,7 @@
         id: "404-book",
         title: "6. GET 404 Not Found",
         method: "GET",
-        url: "http://localhost:3000/books/99999/",
+        url: `${BASE_URL}/books/99999/`,
         body: null,
         screenshot: "screenshots/invalid-book-404.png",
         methodClass: "method-get"
@@ -499,7 +501,7 @@
         id: "400-invalid",
         title: "7. POST 400 Invalid Input",
         method: "POST",
-        url: "http://localhost:3000/books/",
+        url: `${BASE_URL}/books/`,
         body: JSON.stringify({
           title: "",
           author: "Unknown",
@@ -539,10 +541,13 @@
     const infoBanner = document.getElementById("infoBanner");
     const infoBannerText = document.getElementById("infoBannerText");
 
+    // Initialize the default input URL with active domain
+    urlInput.value = `${BASE_URL}/books/`;
+
     // Ensure a test book exists for PUT and DELETE
     async function getOrCreateTestBookId() {
       try {
-        const res = await fetch("http://localhost:3000/books/");
+        const res = await fetch(`${BASE_URL}/books/`);
         const books = await res.json();
         const existingTestBook = books.filter(b => b.id > 9).pop();
         if (existingTestBook) {
@@ -551,7 +556,7 @@
         }
 
         // If no test book exists in DB, create one automatically
-        const createRes = await fetch("http://localhost:3000/books/", {
+        const createRes = await fetch(`${BASE_URL}/books/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -607,7 +612,7 @@
       // If PUT or DELETE, make sure we target an existing test book ID
       if (t.id === "put-book" || t.id === "delete-book") {
         const targetId = await getOrCreateTestBookId();
-        t.url = `http://localhost:3000/books/${targetId}/`;
+        t.url = `${BASE_URL}/books/${targetId}/`;
         infoBanner.style.display = "flex";
         infoBannerText.textContent = `Operating on test book ID #${targetId} (Auto-created if deleted). Ready for screenshot!`;
       }
@@ -654,7 +659,7 @@
         // If PUT or DELETE returned 404 because the book was deleted, auto-recreate and retry once
         if (res.status === 404 && (currentTest.id === "put-book" || currentTest.id === "delete-book")) {
           const freshId = await getOrCreateTestBookId();
-          url = `http://localhost:3000/books/${freshId}/`;
+          url = `${BASE_URL}/books/${freshId}/`;
           urlInput.value = url;
           currentTest.url = url;
           infoBanner.style.display = "flex";
@@ -678,8 +683,8 @@
         // If POST created a new book, update the target ID for PUT and DELETE
         if (currentTest.id === "post-book" && data && data.id) {
           activeTestBookId = data.id;
-          tests.find(x => x.id === "put-book").url = `http://localhost:3000/books/${data.id}/`;
-          tests.find(x => x.id === "delete-book").url = `http://localhost:3000/books/${data.id}/`;
+          tests.find(x => x.id === "put-book").url = `${BASE_URL}/books/${data.id}/`;
+          tests.find(x => x.id === "delete-book").url = `${BASE_URL}/books/${data.id}/`;
         }
 
         // Status pill styling
@@ -695,7 +700,7 @@
       } catch (err) {
         statusPill.textContent = "Error";
         statusPill.className = "status-pill s-500";
-        responseOutput.textContent = `// Network or Connection Error:\n${err.message}\nMake sure your server is running on http://localhost:3000`;
+        responseOutput.textContent = `// Network or Connection Error:\n${err.message}\nMake sure your server is running on ${BASE_URL}`;
       }
     }
 
@@ -714,7 +719,7 @@
 
     async function loadTerminalData() {
       try {
-        const res = await fetch("http://localhost:3000/books/");
+        const res = await fetch(`${BASE_URL}/books/`);
         const books = await res.json();
         let rows = "";
         books.forEach(b => {
