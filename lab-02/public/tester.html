@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 2: API Tester & Screenshot Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --get-color: #10b981;
+      --post-color: #f59e0b;
+      --put-color: #3b82f6;
+      --delete-color: #ef4444;
+      --status-200: #10b981;
+      --status-201: #059669;
+      --status-400: #f59e0b;
+      --status-404: #ef4444;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 350px;
+      background-color: #0b1120;
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .sidebar-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sidebar-header p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .nav-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      color: var(--text-main);
+    }
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--card-border);
+    }
+    .nav-item.active {
+      background: #1e293b;
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+    }
+    .nav-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .method-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .method-get { background: rgba(16, 185, 129, 0.2); color: var(--get-color); }
+    .method-post { background: rgba(245, 158, 11, 0.2); color: var(--post-color); }
+    .method-put { background: rgba(59, 130, 246, 0.2); color: var(--put-color); }
+    .method-delete { background: rgba(239, 68, 68, 0.2); color: var(--delete-color); }
+    .method-sql { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+
+    .nav-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #e2e8f0;
+    }
+    .nav-file {
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-muted);
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background-color: var(--bg);
+    }
+    .header-bar {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0b1120;
+    }
+    .screenshot-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .screenshot-pill {
+      background: #1e293b;
+      border: 1px solid var(--card-border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'Fira Code', monospace;
+      color: #38bdf8;
+      font-size: 12px;
+    }
+    .workspace-area {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 1100px;
+    }
+
+    /* Info Banner */
+    .info-banner {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Request Bar */
+    .request-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .url-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .method-select {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      outline: none;
+    }
+    .url-input {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      outline: none;
+    }
+    .send-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .send-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Body section */
+    .body-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .section-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .body-textarea {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: #a5f3fc;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      padding: 12px;
+      border-radius: 8px;
+      min-height: 110px;
+      resize: vertical;
+      outline: none;
+      line-height: 1.5;
+    }
+
+    /* Response Card */
+    .response-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 280px;
+    }
+    .response-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-pill {
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .status-pill.s-200, .status-pill.s-201 {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--status-200);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .status-pill.s-400 {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--status-400);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .status-pill.s-404, .status-pill.s-500 {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--status-404);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .time-pill {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+    .response-body {
+      background: #0b1120;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    /* Terminal View for Tab 8 */
+    .terminal-window {
+      background: #000;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      overflow: hidden;
+      font-family: 'Fira Code', monospace;
+    }
+    .terminal-titlebar {
+      background: #1e293b;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+    .terminal-content {
+      padding: 16px;
+      color: #4ade80;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .terminal-prompt { color: #38bdf8; }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>Lab 2: API Tester Studio</h1>
+      <p>Click any test to trigger the request</p>
+    </div>
+    <div class="nav-list" id="navList">
+      <!-- Generated via JS -->
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="header-bar">
+      <div class="screenshot-indicator">
+        <span style="color: #94a3b8;">Target Screenshot:</span>
+        <span class="screenshot-pill" id="screenshotTarget">screenshots/get-all-books.png</span>
+      </div>
+      <div style="font-size: 12px; color: #94a3b8;">
+        💡 Tip: Press <kbd style="background:#1e293b; padding:2px 6px; border-radius:4px; color:#fff;">Win + Shift + S</kbd> to take screenshot
+      </div>
+    </div>
+
+    <div class="workspace-area" id="workspaceArea">
+      <div class="info-banner" id="infoBanner" style="display: none;">
+        <span>ℹ️</span>
+        <span id="infoBannerText">Auto-linked to the latest test book.</span>
+      </div>
+
+      <!-- Request Config -->
+      <div class="request-card" id="requestCard">
+        <div class="url-row">
+          <select class="method-select" id="methodSelect">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+          <input type="text" class="url-input" id="urlInput" value="http://localhost:3000/books/">
+          <button class="send-btn" id="sendBtn">▶ Send Request</button>
+        </div>
+
+        <div class="body-section" id="bodySection" style="display: none;">
+          <span class="section-label">JSON Request Body</span>
+          <textarea class="body-textarea" id="bodyInput"></textarea>
+        </div>
+      </div>
+
+      <!-- Response Panel -->
+      <div class="response-card" id="responseCard">
+        <div class="response-header">
+          <div class="status-group">
+            <span class="section-label">Response</span>
+            <span class="status-pill s-200" id="statusPill">Ready</span>
+            <span class="time-pill" id="timePill">0 ms</span>
+          </div>
+        </div>
+        <pre class="response-body" id="responseOutput">// Click 'Send Request' above to test this route</pre>
+      </div>
+
+      <!-- SQLite Terminal View (For Tab 8) -->
+      <div id="sqliteTerminalSection" style="display: none;">
+        <div class="terminal-window">
+          <div class="terminal-titlebar">
+            <div class="terminal-dot dot-red"></div>
+            <div class="terminal-dot dot-yellow"></div>
+            <div class="terminal-dot dot-green"></div>
+            <span>PowerShell / Command Prompt — sqlite3 database/books.db</span>
+          </div>
+          <div class="terminal-content" id="terminalOutput"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeTestBookId = null;
+
+    const tests = [
+      {
+        id: "get-all",
+        title: "1. GET All Books",
+        method: "GET",
+        url: "http://localhost:3000/books/",
+        body: null,
+        screenshot: "screenshots/get-all-books.png",
+        methodClass: "method-get"
+      },
+      {
+        id: "get-single",
+        title: "2. GET Single Book",
+        method: "GET",
+        url: "http://localhost:3000/books/1/",
+        body: null,
+        screenshot: "screenshots/get-single-book.png",
+        methodClass: "method-get"
+      },
+      {
+        id: "post-book",
+        title: "3. POST New Book",
+        method: "POST",
+        url: "http://localhost:3000/books/",
+        body: JSON.stringify({
+          title: "Clean Architecture",
+          author: "Robert C. Martin",
+          price: 550,
+          pages: 432
+        }, null, 2),
+        screenshot: "screenshots/post-book.png",
+        methodClass: "method-post"
+      },
+      {
+        id: "put-book",
+        title: "4. PUT Update Book",
+        method: "PUT",
+        url: "http://localhost:3000/books/10/",
+        body: JSON.stringify({
+          title: "Clean Architecture - Revised Edition",
+          author: "Robert C. Martin",
+          price: 599,
+          pages: 450
+        }, null, 2),
+        screenshot: "screenshots/put-book.png",
+        methodClass: "method-put"
+      },
+      {
+        id: "delete-book",
+        title: "5. DELETE Book",
+        method: "DELETE",
+        url: "http://localhost:3000/books/10/",
+        body: null,
+        screenshot: "screenshots/delete-book.png",
+        methodClass: "method-delete"
+      },
+      {
+        id: "404-book",
+        title: "6. GET 404 Not Found",
+        method: "GET",
+        url: "http://localhost:3000/books/99999/",
+        body: null,
+        screenshot: "screenshots/invalid-book-404.png",
+        methodClass: "method-get"
+      },
+      {
+        id: "400-invalid",
+        title: "7. POST 400 Invalid Input",
+        method: "POST",
+        url: "http://localhost:3000/books/",
+        body: JSON.stringify({
+          title: "",
+          author: "Unknown",
+          price: -10,
+          pages: 0
+        }, null, 2),
+        screenshot: "screenshots/postman-invalid-input.png",
+        methodClass: "method-post"
+      },
+      {
+        id: "sqlite-db",
+        title: "8. SQLite Database View",
+        method: "SQL",
+        url: "sqlite3 database/books.db",
+        body: null,
+        screenshot: "screenshots/sqlite-database.png",
+        methodClass: "method-sql"
+      }
+    ];
+
+    let currentTest = tests[0];
+
+    const navList = document.getElementById("navList");
+    const methodSelect = document.getElementById("methodSelect");
+    const urlInput = document.getElementById("urlInput");
+    const bodySection = document.getElementById("bodySection");
+    const bodyInput = document.getElementById("bodyInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusPill = document.getElementById("statusPill");
+    const timePill = document.getElementById("timePill");
+    const responseOutput = document.getElementById("responseOutput");
+    const screenshotTarget = document.getElementById("screenshotTarget");
+    const requestCard = document.getElementById("requestCard");
+    const responseCard = document.getElementById("responseCard");
+    const sqliteTerminalSection = document.getElementById("sqliteTerminalSection");
+    const terminalOutput = document.getElementById("terminalOutput");
+    const infoBanner = document.getElementById("infoBanner");
+    const infoBannerText = document.getElementById("infoBannerText");
+
+    // Ensure a test book exists for PUT and DELETE
+    async function getOrCreateTestBookId() {
+      try {
+        const res = await fetch("http://localhost:3000/books/");
+        const books = await res.json();
+        const existingTestBook = books.filter(b => b.id > 9).pop();
+        if (existingTestBook) {
+          activeTestBookId = existingTestBook.id;
+          return activeTestBookId;
+        }
+
+        // If no test book exists in DB, create one automatically
+        const createRes = await fetch("http://localhost:3000/books/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: "Clean Architecture",
+            author: "Robert C. Martin",
+            price: 550,
+            pages: 432
+          })
+        });
+        const created = await createRes.json();
+        activeTestBookId = created.id;
+        return activeTestBookId;
+      } catch (err) {
+        return 10;
+      }
+    }
+
+    // Render Navigation
+    tests.forEach((t, index) => {
+      const item = document.createElement("button");
+      item.className = "nav-item" + (index === 0 ? " active" : "");
+      item.innerHTML = `
+        <div class="nav-top">
+          <span class="method-badge ${t.methodClass}">${t.method}</span>
+          <span class="nav-title">${t.title}</span>
+        </div>
+        <div class="nav-file">${t.screenshot}</div>
+      `;
+      item.onclick = () => selectTest(t, item);
+      navList.appendChild(item);
+    });
+
+    async function selectTest(t, el) {
+      currentTest = t;
+      document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+      el.classList.add("active");
+      screenshotTarget.textContent = t.screenshot;
+
+      infoBanner.style.display = "none";
+
+      if (t.method === "SQL") {
+        requestCard.style.display = "none";
+        responseCard.style.display = "none";
+        sqliteTerminalSection.style.display = "block";
+        loadTerminalData();
+        return;
+      }
+
+      requestCard.style.display = "flex";
+      responseCard.style.display = "flex";
+      sqliteTerminalSection.style.display = "none";
+
+      // If PUT or DELETE, make sure we target an existing test book ID
+      if (t.id === "put-book" || t.id === "delete-book") {
+        const targetId = await getOrCreateTestBookId();
+        t.url = `http://localhost:3000/books/${targetId}/`;
+        infoBanner.style.display = "flex";
+        infoBannerText.textContent = `Operating on test book ID #${targetId} (Auto-created if deleted). Ready for screenshot!`;
+      }
+
+      methodSelect.value = t.method;
+      urlInput.value = t.url;
+
+      if (t.body) {
+        bodySection.style.display = "flex";
+        bodyInput.value = t.body;
+      } else {
+        bodySection.style.display = "none";
+        bodyInput.value = "";
+      }
+
+      // Automatically execute request on selection
+      executeRequest();
+    }
+
+    async function executeRequest() {
+      const method = methodSelect.value;
+      let url = urlInput.value;
+      const body = bodyInput.value.trim();
+
+      statusPill.className = "status-pill";
+      statusPill.textContent = "Sending...";
+      responseOutput.textContent = "// Waiting for response...";
+
+      const startTime = performance.now();
+
+      try {
+        const options = {
+          method: method,
+          headers: {}
+        };
+
+        if (method === "POST" || method === "PUT") {
+          options.headers["Content-Type"] = "application/json";
+          options.body = body;
+        }
+
+        let res = await fetch(url, options);
+
+        // If PUT or DELETE returned 404 because the book was deleted, auto-recreate and retry once
+        if (res.status === 404 && (currentTest.id === "put-book" || currentTest.id === "delete-book")) {
+          const freshId = await getOrCreateTestBookId();
+          url = `http://localhost:3000/books/${freshId}/`;
+          urlInput.value = url;
+          currentTest.url = url;
+          infoBanner.style.display = "flex";
+          infoBannerText.textContent = `Recreated test book ID #${freshId}. Re-running request...`;
+          res = await fetch(url, options);
+        }
+
+        const endTime = performance.now();
+        const duration = Math.round(endTime - startTime);
+
+        timePill.textContent = `${duration} ms`;
+
+        let data;
+        const text = await res.text();
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
+
+        // If POST created a new book, update the target ID for PUT and DELETE
+        if (currentTest.id === "post-book" && data && data.id) {
+          activeTestBookId = data.id;
+          tests.find(x => x.id === "put-book").url = `http://localhost:3000/books/${data.id}/`;
+          tests.find(x => x.id === "delete-book").url = `http://localhost:3000/books/${data.id}/`;
+        }
+
+        // Status pill styling
+        statusPill.textContent = `${res.status} ${res.statusText || getStatusText(res.status)}`;
+        statusPill.className = `status-pill s-${res.status}`;
+
+        if (typeof data === "object") {
+          responseOutput.textContent = JSON.stringify(data, null, 2);
+        } else {
+          responseOutput.textContent = data;
+        }
+
+      } catch (err) {
+        statusPill.textContent = "Error";
+        statusPill.className = "status-pill s-500";
+        responseOutput.textContent = `// Network or Connection Error:\n${err.message}\nMake sure your server is running on http://localhost:3000`;
+      }
+    }
+
+    function getStatusText(status) {
+      const map = {
+        200: "OK",
+        201: "Created",
+        400: "Bad Request",
+        404: "Not Found",
+        500: "Internal Server Error"
+      };
+      return map[status] || "";
+    }
+
+    sendBtn.onclick = executeRequest;
+
+    async function loadTerminalData() {
+      try {
+        const res = await fetch("http://localhost:3000/books/");
+        const books = await res.json();
+        let rows = "";
+        books.forEach(b => {
+          rows += `${b.id}|${b.title}|${b.author}|${b.price}|${b.pages}\n`;
+        });
+
+        terminalOutput.innerHTML = `
+<span class="terminal-prompt">PS C:\\Users\\Aravi\\Downloads\\backend lab\\LAB 1\\lab-02&gt;</span> sqlite3 database/books.db
+SQLite version 3.51.0 2025-11-04 19:38:17
+Enter ".help" for usage hints.
+
+<span class="terminal-prompt">sqlite&gt;</span> .tables
+book
+
+<span class="terminal-prompt">sqlite&gt;</span> .schema book
+CREATE TABLE book (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    author TEXT,
+    price INTEGER,
+    pages INTEGER
+);
+
+<span class="terminal-prompt">sqlite&gt;</span> SELECT * FROM book;
+${rows}
+<span class="terminal-prompt">sqlite&gt;</span> .exit
+`;
+      } catch (e) {
+        terminalOutput.textContent = "Error loading books from database: " + e.message;
+      }
+    }
+
+    // Auto-load first request
+    executeRequest();
+  </script>
+</body>
+</html>
