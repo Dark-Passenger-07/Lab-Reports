@@ -8,8 +8,10 @@
 
 ## Deployment & Live Link Status
 
+- **Live Base URL:** [https://lab-03-rest-api-prko.onrender.com/](https://lab-03-rest-api-prko.onrender.com/)
+- **Live Books Endpoint:** [https://lab-03-rest-api-prko.onrender.com/books/](https://lab-03-rest-api-prko.onrender.com/books/)
 - **Local Base URL:** `http://localhost:3000/books/`
-- **Render Deployment Status:** Configured for Render deployment (`rootDir: lab-03`, `startCommand: node index.js`, binding to `process.env.PORT || 3000`).  
+- **Render Deployment Status:** Active & Deployed on Render (`rootDir: lab-03`, `startCommand: node index.js`, binding to `process.env.PORT || 3000`).  
 - **Note on Cloud SQLite Persistence:** SQLite operates on an ephemeral local filesystem on standard free-tier hosting platforms like Render. Any runtime database modifications (such as POST or DELETE) reset upon redeployment or service restart unless backed by persistent disk storage.
 
 ---
